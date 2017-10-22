@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+	<head>
+		<title>CodeMirror: Vim bindings demo</title>
+		<meta charset="utf-8"/>
+		<link rel=stylesheet href="doc/docs.css">
+		<link rel="stylesheet" href="lib/codemirror.css">
+		<link rel="stylesheet" href="addon/dialog/dialog.css">
+		<script src="lib/codemirror.js"></script>
+		<script src="addon/dialog/dialog.js"></script>
+		<script src="addon/search/searchcursor.js"></script>
+		<script src="mode/clike/clike.js"></script>
+		<script src="addon/edit/matchbrackets.js"></script>
+		<script src="keymap/vim.js"></script>
+		<style type="text/css">
+		  .CodeMirror {border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
+		</style>
+	</head>
+	<body>
+		<div style="float:left;">
+			<textarea id="code" name="code" rows="4" cols="50" ></textarea>
+			<textarea id="result" name="result" rows="4" cols="50" ></textarea>
+		</div>
+		<div>
+			<button type="submit" onclick="compileCode()">Compile</button>
+			<button type="submit" onclick="runCode()">Run</button>
+			<button type="submit" onclick="downloadCode()">Download</button>
+			<button type="submit" onclick="pasteCode()">Paste</button>
+		</div>
+		<div style="font-size: 13px; width: 300px; height: 30px;">Key buffer: <span id="command-display"></span></div>
+		<script>
+			CodeMirror.commands.save = function(){ 
+				alert("Saving"); 
+			};
+			var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+				lineNumbers: true,
+				mode: "text/x-java",
+				keyMap: "vim",
+				matchBrackets: true,
+				showCursorWhenSelecting: true,
+				inputStyle: "contenteditable"
+			});
+			var commandDisplay = document.getElementById('command-display');
+			var keys = '';
+			CodeMirror.on(editor, 'vim-keypress', function(key) {
+				keys = keys + key;
+				commandDisplay.innerHTML = keys;
+			});
+			CodeMirror.on(editor, 'vim-command-done', function(e) {
+				keys = '';
+				commandDisplay.innerHTML = keys;
+			});
+			function compileCode(){
+				var data= { "compile" : editor.getValue()};
+				console.log(data);
+			}
+			function runCode(){
+				var data= { "run" : editor.getValue()};
+				console.log(data);
+			}
+			
+			function downloadCode(){
+				var textToWrite = editor.getValue();
+				var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+				var fileNameToSaveAs = "Main.java";
+				var downloadLink = document.createElement("a");
+				downloadLink.download = fileNameToSaveAs;
+				downloadLink.innerHTML = "Download File";
+				if (window.webkitURL != null)
+				{
+					// Chrome allows the link to be clicked
+					// without actually adding it to the DOM.
+					downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+				}
+				else
+				{
+					// Firefox requires the link to be added to the DOM
+					// before it can be clicked.
+					downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+					downloadLink.onclick = destroyClickedElement;
+					downloadLink.style.display = "none";
+					document.body.appendChild(downloadLink);
+				}
+				downloadLink.click();
+			}
+			
+			function destroyClickedElement(event) {
+				document.body.removeChild(event.target);
+			}
+			
+			function pasteCode(){
+				console.log("Will paste the code");
+			}
+		</script>
+	</body>
+</html>
