@@ -9,6 +9,7 @@ import com.aliascode.JavaCompiler.model.CompilerResponse;
 public class CompilerService {
 	private CompilerOperation cops;
 	public CompilerService(CompilerOperation cops){
+//		System.out.println("Received Request");
 		this.cops=cops;
 	}
 	public CompilerResponse service(){
@@ -22,8 +23,9 @@ public class CompilerService {
 			}else if(cops.getOperationType().equals("run")){
 				return cops.runCode();
 			}else{
-				return new CompilerResponse("Error:","Unsupported request!");
+				return new CompilerResponse("Error:", "Unsupported request!");
 			}
 		}
 	}
 }
+////////////////////////////////////////////

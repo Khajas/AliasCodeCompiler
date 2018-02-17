@@ -21,6 +21,7 @@ public class CompilerOperation{
 	private String operationType;
 	private String javaCode;
 	private String args;
+	
 	public CompilerOperation() {
 		super();
 	}
@@ -77,31 +78,31 @@ public class CompilerOperation{
 		try {
 			Process p = Runtime.getRuntime().exec("javac /tmp/Main.java");
 			BufferedReader r=null;
-	        StringBuilder line=new StringBuilder();
-	        while(p.isAlive()){
+		        StringBuilder line=new StringBuilder();
+		        while(p.isAlive()){	// Waiting indefinitely for the process to terminate
 	        
-	        }
-	        if(p.exitValue()==0){
-	        	r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        	cres.setResult("Success");
-	        	line.append("Compiled Successfully!");
-	        }else{
+	        	}
+		        if(p.exitValue()==0){
+		        	r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        		cres.setResult("Success");
+	        		line.append("Compiled Successfully!");
+		        }else{
 				r = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 				cres.setResult("Error!");
-	        }
-	        while (r!=null) {
-	            String temp = r.readLine();
-	            if (temp == null) { break; }
-	            line.append(temp+"\n");
-	        }
-	        cres.setOutput(line.toString());
-	        if(this.operationType.equals("compile"))
-			Runtime.getRuntime().exec("rm /tmp/Main.java /tmp/Main.class");
-		p.destroy();
+		        }
+	        	while (r!=null) {
+	           		String temp = r.readLine();
+				if (temp == null) { break; }
+	            		line.append(temp+"\n");
+	        	}
+		        cres.setOutput(line.toString());
+		        if(this.operationType.equals("compile"))
+				Runtime.getRuntime().exec("rm /tmp/Main.java /tmp/Main.class");
+			p.destroy();
 		} catch (IOException e) {
-			e.printStackTrace();
-			cres.setResult("Error");
-			cres.setOutput("Can't handle request at this time!");
+//			e.printStackTrace();
+			cres.setResult("Error!");
+			cres.setOutput(e.getMessage());
 		}
 		return cres;
 	}
@@ -112,32 +113,34 @@ public class CompilerOperation{
 			CompilerResponse crs=this.comp();
 			if(!crs.getResult().equals("Success"))
 				return crs;
-			Process p=Runtime.getRuntime().exec("java -cp /tmp Main "+args);
+			Process p=Runtime.getRuntime().exec("chmod 777 /tmp/Main*");	// Check if 777 is necessary
+			p=Runtime.getRuntime().exec("java -Djava.security.manager -Djava.security.policy==~/security/sec.policy -cp /tmp Main "+args);
 			BufferedReader r=null;
-	        StringBuilder line=new StringBuilder();
-	        while(p.isAlive()){
+	        	StringBuilder line=new StringBuilder();
+	        	while(p.isAlive()){	// Waiting indefinately for the process to terminate
 		        
-	        }
-	        if(p.exitValue()==0){
-	        	r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        	cres.setResult("Success");
-	        }else{
+	        	}
+	        	if(p.exitValue()==0){
+	        		r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		        	cres.setResult("Success");
+		        }else{
 				r = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 				cres.setResult("Error!");
-	        }
-	        while (r!=null) {
-	            String temp = r.readLine();
-	            if (temp == null) { break; }
-	            line.append(temp+"\n");
-	        }
-	        cres.setOutput(line.toString());
-	        Runtime.getRuntime().exec("rm /tmp/Main.java /tmp/Main.class");
-		p.destroy();
+	        	}
+		        while (r!=null) {
+		            String temp = r.readLine();
+	        	    if (temp == null) { break; }
+		            line.append(temp+"\n");
+		        }
+		        cres.setOutput(line.toString());
+		        Runtime.getRuntime().exec("rm /tmp/Main.java /tmp/Main.class");
+			p.destroy();
 		} catch (IOException e) {
-			e.printStackTrace();
-			cres.setResult("Error");
-			cres.setOutput("Can't handle request at this time!");
+//			e.printStackTrace();
+			cres.setResult("Error!");
+			cres.setOutput(e.getMessage());
 		}
 		return cres;
 	}
 }
+////////////////////////////////////////////////////////////////

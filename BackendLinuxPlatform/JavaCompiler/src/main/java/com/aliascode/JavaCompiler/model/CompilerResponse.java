@@ -4,8 +4,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CompilerResponse {
+
 	private String result;
 	private String output;
+	
 	public CompilerResponse() {
 		super();
 	}
@@ -27,3 +29,4 @@ public class CompilerResponse {
 		this.output = output;
 	}
 }
+/////////////////////////////////////////////////////

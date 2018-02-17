@@ -19,7 +19,7 @@ public class CompilerController {
 	@CrossOrigin(origins = "*")
 	@RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<CompilerResponse> greeting(@RequestBody CompilerOperation cops) {
-//	System.out.println("Received!");
+//	System.out.println("Inside controller : Received!");
     	return new ResponseEntity<CompilerResponse>(new CompilerService(cops).service(), HttpStatus.OK);
     }
 
